@@ -38,7 +38,9 @@ class Application extends StatelessWidget {
         data: Theme.brightnessOf(context) == .light ? lightTheme : darkTheme,
         child: FToaster(child: FTooltipGroup(child: child!)),
       ),
-      home: FScaffold(
+      home: Builder(
+        builder: (innerContext){
+        return FScaffold(
         child: Container(
           width: 1280,
           height: 720,
@@ -81,12 +83,28 @@ class Application extends StatelessWidget {
                         variant: .secondary,
                         size: .lg,
                         prefix: const Icon(Icons.add, size: 32),
-                        onPress: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CreateProjectScreen(),
-                          ),
-                        ),
+                        onPress: () async {
+                          final path = await showDialog<String>(
+                            context: innerContext,
+                            barrierDismissible: false,
+                            builder: (_) => const CreateProjectScreen(),
+                          );
+                          if (path != null && innerContext.mounted) {
+                            await showDialog<void>(
+                              context: innerContext,
+                              builder: (dialogContext) => AlertDialog(
+                                title: const Text('Project created'),
+                                content: SelectableText(path),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(dialogContext).pop(),
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
                         child: const Text(
                           'New Project',
                           style: TextStyle(fontSize: 32),
@@ -116,6 +134,8 @@ class Application extends StatelessWidget {
             ],
           ),
         ),
+      );
+        },
       ),
     );
   }

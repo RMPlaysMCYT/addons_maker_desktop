@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   screen_retriever_windows
   thermion_flutter
+  url_launcher_windows
   window_manager
 )
 
