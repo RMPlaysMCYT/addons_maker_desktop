@@ -1,3 +1,4 @@
+import 'package:addons_maker_desktop/screens/create_project_screen.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:forui/forui.dart';
@@ -41,7 +42,7 @@ class Application extends StatelessWidget {
         child: Container(
           width: 1280,
           height: 720,
-          padding: const EdgeInsets.all(32.0  ),
+          padding: const EdgeInsets.all(32.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,10 +52,7 @@ class Application extends StatelessWidget {
                 children: [
                   const Text(
                     'Hello, Welcome to Minecraft Addons Maker Ultimate!',
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                   ),
                   const Text(
                     'Pick up the project where you left at',
@@ -73,15 +71,26 @@ class Application extends StatelessWidget {
                         size: .lg,
                         prefix: const Icon(Icons.folder_open, size: 32),
                         onPress: () {}, // Fill in the actual click logic
-                        child: const Text('Open Project', style: TextStyle(fontSize: 32)),
+                        child: const Text(
+                          'Open Project',
+                          style: TextStyle(fontSize: 32),
+                        ),
                       ),
                       SizedBox(width: 16),
                       FButton(
                         variant: .secondary,
                         size: .lg,
                         prefix: const Icon(Icons.add, size: 32),
-                        onPress: () {}, // Fill in the actual click logic
-                        child: const Text('New Project', style: TextStyle(fontSize: 32)),
+                        onPress: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateProjectScreen(),
+                          ),
+                        ),
+                        child: const Text(
+                          'New Project',
+                          style: TextStyle(fontSize: 32),
+                        ),
                       ),
                     ],
                   ),
