@@ -87,6 +87,23 @@ class Application extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 32),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Recent Projects',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  // Placeholder for recent projects list
+                  Container(
+                    height: 300,
+                    color: const Color.fromARGB(255, 21, 21, 21),
+                    child: Center(child: Text('No recent projects found.')),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
