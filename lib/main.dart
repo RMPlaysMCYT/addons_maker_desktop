@@ -70,18 +70,18 @@ class Application extends StatelessWidget {
                     children: [
                       FButton(
                         variant: .primary,
-                        size: .md,
-                        prefix: const Icon(Icons.folder_open),
+                        size: .lg,
+                        prefix: const Icon(Icons.folder_open, size: 32),
                         onPress: () {}, // Fill in the actual click logic
-                        child: const Text('Open Project'),
+                        child: const Text('Open Project', style: TextStyle(fontSize: 32)),
                       ),
                       SizedBox(width: 16),
                       FButton(
                         variant: .secondary,
-                        size: .md,
-                        prefix: const Icon(Icons.add),
+                        size: .lg,
+                        prefix: const Icon(Icons.add, size: 32),
                         onPress: () {}, // Fill in the actual click logic
-                        child: const Text('New Project'),
+                        child: const Text('New Project', style: TextStyle(fontSize: 32)),
                       ),
                     ],
                   ),
