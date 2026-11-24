@@ -32,6 +32,7 @@ class Application extends StatelessWidget {
       localizationsDelegates: const [...FLocalizations.localizationsDelegates],
       theme: lightTheme.toApproximateMaterialTheme(),
       darkTheme: darkTheme.toApproximateMaterialTheme(),
+      debugShowCheckedModeBanner: false,
       builder: (context, child) => FTheme(
         data: Theme.brightnessOf(context) == .light ? lightTheme : darkTheme,
         child: FToaster(child: FTooltipGroup(child: child!)),
@@ -40,24 +41,49 @@ class Application extends StatelessWidget {
         child: Container(
           width: 1280,
           height: 720,
-          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.all(32.0  ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Hello, Welcome to Minecraft Addons Maker Ultimate!',
-                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Hello, Welcome to Minecraft Addons Maker Ultimate!',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Pick up the project where you left at',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                ],
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Pick up the project where you left at',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  FButton(
-                    onPress: () {}, // Fill in the actual click logic
-                    child: const Text('Open Project'),
+                  Row(
+                    children: [
+                      FButton(
+                        variant: .primary,
+                        size: .md,
+                        prefix: const Icon(Icons.folder_open),
+                        onPress: () {}, // Fill in the actual click logic
+                        child: const Text('Open Project'),
+                      ),
+                      SizedBox(width: 16),
+                      FButton(
+                        variant: .secondary,
+                        size: .md,
+                        prefix: const Icon(Icons.add),
+                        onPress: () {}, // Fill in the actual click logic
+                        child: const Text('New Project'),
+                      ),
+                    ],
                   ),
                 ],
               ),
