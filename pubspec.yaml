@@ -52,6 +52,7 @@ dependencies:
   json_schema: ^5.2.2
   thermion_flutter: ^0.4.1
   url_launcher: ^6.3.3
+  re_editor: ^0.10.0
 
 dev_dependencies:
   flutter_test:
