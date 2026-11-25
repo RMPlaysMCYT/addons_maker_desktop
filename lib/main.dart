@@ -1,4 +1,6 @@
 import 'package:addons_maker_desktop/screens/create_project_screen.dart';
+import 'package:addons_maker_desktop/screens/project_workspace.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:forui/forui.dart';
@@ -10,6 +12,8 @@ void main() {
 
 class Application extends StatelessWidget {
   const Application({super.key});
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +76,19 @@ class Application extends StatelessWidget {
                         variant: .primary,
                         size: .lg,
                         prefix: const Icon(Icons.folder_open, size: 32),
-                        onPress: () {}, // Fill in the actual click logic
+                        onPress: () async {
+                          final folder = await FilePicker.getDirectoryPath();
+                          if(folder == null || !innerContext.mounted){
+                            return;
+                          }
+                          await Navigator.of(innerContext).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ProjectWorkspaceScreen(
+                                projectPath: folder,
+                              ),
+                            ),
+                          );
+                        }, // Fill in the actual click logic
                         child: const Text(
                           'Open Project',
                           style: TextStyle(fontSize: 32),
@@ -89,21 +105,16 @@ class Application extends StatelessWidget {
                             barrierDismissible: false,
                             builder: (_) => const CreateProjectScreen(),
                           );
-                          if (path != null && innerContext.mounted) {
-                            await showDialog<void>(
-                              context: innerContext,
-                              builder: (dialogContext) => AlertDialog(
-                                title: const Text('Project created'),
-                                content: SelectableText(path),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.of(dialogContext).pop(),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
+                          if (path == null || !innerContext.mounted) {
+                            return;
                           }
+                          await Navigator.of(innerContext).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => ProjectWorkspaceScreen(
+                                projectPath: path,
+                              ),
+                            ),
+                          );
                         },
                         child: const Text(
                           'New Project',
