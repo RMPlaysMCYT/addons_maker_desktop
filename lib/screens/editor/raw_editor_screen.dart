@@ -1,55 +1,26 @@
-
 import 'package:material_ui/material_ui.dart';
 import 'package:re_editor/re_editor.dart';
 
 class RawEditorScreen extends StatelessWidget {
-  const RawEditorScreen({
-    super.key,
-    required this.controller,
-  });
+  const RawEditorScreen({super.key, required this.controller});
 
   final CodeLineEditingController controller;
 
   static const List<CodePrompt> bedrockPrompts = [
-    CodeFieldPrompt(
-      word: 'format_version',
-      type: 'String',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:entity',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:item',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:block',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:health',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:movement',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:collision_box',
-      type: 'Object',
-    ),
-    CodeFieldPrompt(
-      word: 'minecraft:physics',
-      type: 'Object',
-    ),
+    CodeFieldPrompt(word: 'format_version', type: 'String'),
+    CodeFieldPrompt(word: 'minecraft:entity', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:item', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:block', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:health', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:movement', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:collision_box', type: 'Object'),
+    CodeFieldPrompt(word: 'minecraft:physics', type: 'Object'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return CodeAutocomplete(
-      promptsBuilder:
-          DefaultCodeAutocompletePromptsBuilder(
+      promptsBuilder: DefaultCodeAutocompletePromptsBuilder(
         directPrompts: bedrockPrompts,
       ),
       viewBuilder: (context, notifier, onSelected) {
@@ -96,6 +67,13 @@ class RawEditorScreen extends StatelessWidget {
       child: CodeEditor(
         controller: controller,
         wordWrap: false,
+        style: const CodeEditorStyle(
+          backgroundColor: Color(0xFFF8F8F4),
+          textColor: Color(0xFF28323A),
+          cursorColor: Color(0xFF366B52),
+          selectionColor: Color(0x663B8867),
+          fontSize: 14,
+        ),
       ),
     );
   }
