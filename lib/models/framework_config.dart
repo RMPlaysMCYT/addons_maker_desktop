@@ -46,6 +46,15 @@ class ProjectCreationRequest {
     this.customExecutable,
     this.anvilScriptApi = false,
     this.anvilAddon = true,
+    this.anvilCompany = '',
+    this.anvilDisplayName = '',
+    this.anvilDescription = '',
+    this.anvilScriptUi = false,
+    this.anvilPbr = false,
+    this.anvilPreview = false,
+    this.anvilMinify = false,
+    this.anvilLocalExport = false,
+    this.anvilAddStamp = true,
   });
   final String name;
   final String namespace;
@@ -55,6 +64,15 @@ class ProjectCreationRequest {
   final String? customExecutable;
   final bool anvilScriptApi;
   final bool anvilAddon;
+  final String anvilCompany;
+  final String anvilDisplayName;
+  final String anvilDescription;
+  final bool anvilScriptUi;
+  final bool anvilPbr;
+  final bool anvilPreview;
+  final bool anvilMinify;
+  final bool anvilLocalExport;
+  final bool anvilAddStamp;
 }
 
 class FrameworkConfig {

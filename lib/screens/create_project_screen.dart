@@ -25,6 +25,16 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
   bool _anvilAddon = true;
   bool _anvilScriptApi = false;
   PrerequisiteChoice _choice = PrerequisiteChoice.install;
+  bool _anvilScriptUi = false;
+  bool _anvilPbr = false;
+  bool _anvilPreview = false;
+  bool _anvilMinify = false;
+  bool _anvilLocalExport = false;
+  bool _anvilAddStamp = true;
+
+  final _anvilCompany = TextEditingController();
+  final _anvilDisplayName = TextEditingController();
+
   String? _selectedExecutable;
   String? _error;
   bool _busy = false;
@@ -41,6 +51,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     _name.dispose();
     _namespace.dispose();
     _parent.dispose();
+    _anvilCompany.dispose();
+    _anvilDisplayName.dispose();
     super.dispose();
   }
 
@@ -116,6 +128,12 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
             : null,
         anvilAddon: _anvilAddon,
         anvilScriptApi: _anvilScriptApi,
+        anvilScriptUi: _anvilScriptUi,
+        anvilPbr: _anvilPbr,
+        anvilPreview: _anvilPreview,
+        anvilMinify: _anvilMinify,
+        anvilLocalExport: _anvilLocalExport,
+        anvilAddStamp: _anvilAddStamp,
       );
       if (_framework != ProjectFramework.standard &&
           _choice == PrerequisiteChoice.locate &&
@@ -315,6 +333,93 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                                   ),
                           ),
                           const SizedBox(height: 8),
+                          TextFormField(
+                            controller: _anvilCompany,
+                            decoration: const InputDecoration(
+                              labelText: 'Company / Author',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextFormField(
+                            controller: _anvilDisplayName,
+                            decoration: const InputDecoration(
+                              labelText: 'Display Name',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Enable Script UI'),
+                            subtitle: const Text(
+                              'Requires Script API to be enabled.',
+                            ),
+                            value: _anvilScriptUi,
+                            onChanged: _busy || !_anvilScriptApi
+                                ? null
+                                : (value) {
+                                    setState(() {
+                                      _anvilScriptUi = value ?? false;
+                                    });
+                                  },
+                          ),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Enable PBR'),
+                            value: _anvilPbr,
+                            onChanged: _busy
+                                ? null
+                                : (value) => setState(
+                                    () => _anvilPbr = value ?? false,
+                                  ),
+                          ),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Minecraft Preview'),
+                            value: _anvilPreview,
+                            onChanged: _busy
+                                ? null
+                                : (value) => setState(
+                                    () => _anvilPreview = value ?? false,
+                                  ),
+                          ),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Minify Build'),
+                            value: _anvilMinify,
+                            onChanged: _busy
+                                ? null
+                                : (value) => setState(
+                                    () => _anvilMinify = value ?? false,
+                                  ),
+                          ),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Local Export'),
+                            value: _anvilLocalExport,
+                            onChanged: _busy
+                                ? null
+                                : (value) => setState(
+                                    () => _anvilLocalExport = value ?? false,
+                                  ),
+                          ),
+
+                          CheckboxListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text('Add Build Stamp'),
+                            value: _anvilAddStamp,
+                            onChanged: _busy
+                                ? null
+                                : (value) => setState(
+                                    () => _anvilAddStamp = value ?? true,
+                                  ),
+                          ),
                         ],
                         if (_framework == ProjectFramework.standard)
                           const Card(
