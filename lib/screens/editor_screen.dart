@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:material_ui/material_ui.dart';
@@ -71,10 +70,7 @@ class _EditorScreenState extends State<EditorScreen> {
     if (controller == null) return;
 
     try {
-      await File(widget.filePath).writeAsString(
-        controller.text,
-        flush: true,
-      );
+      await File(widget.filePath).writeAsString(controller.text, flush: true);
 
       if (!mounted) return;
 
@@ -98,23 +94,31 @@ class _EditorScreenState extends State<EditorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(p.basename(widget.filePath)),
-        actions: [
-          if (_dirty)
-            const Padding(
-              padding: EdgeInsets.all(8),
-              child: Center(child: Text('Modified')),
-            ),
-          IconButton(
-            tooltip: 'Save',
-            icon: const Icon(Icons.save),
-            onPressed: _controller == null ? null : _saveFile,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          SizedBox(
+            height: 48,
+            child: Row(
+              children: [
+                const SizedBox(width: 12),
+                const Icon(Icons.description_outlined, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    p.basename(widget.filePath),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (_dirty) const Text('● Modified'),
+                IconButton(
+                  tooltip: 'Save',
+                  onPressed: _controller == null ? null : _saveFile,
+                  icon: const Icon(Icons.save_outlined),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.all(12),
             child: SegmentedButton<EditorMode>(
@@ -139,25 +143,16 @@ class _EditorScreenState extends State<EditorScreen> {
           if (_error != null)
             Padding(
               padding: const EdgeInsets.all(8),
-              child: Text(
-                _error!,
-                style: const TextStyle(color: Colors.red),
-              ),
+              child: Text(_error!, style: const TextStyle(color: Colors.red)),
             ),
           Expanded(
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _controller == null
-                    ? const Center(
-                        child: Text('Unable to open file'),
-                      )
-                    : _mode == EditorMode.raw
-                        ? RawEditorScreen(
-                            controller: _controller!,
-                          )
-                        : VisualEditorScreen(
-                            source: _controller!.text,
-                          ),
+                ? const Center(child: Text('Unable to open file'))
+                : _mode == EditorMode.raw
+                ? RawEditorScreen(controller: _controller!)
+                : VisualEditorScreen(source: _controller!.text),
           ),
         ],
       ),

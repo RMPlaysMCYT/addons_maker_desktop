@@ -1,189 +1,196 @@
-
 import 'dart:io';
 
+import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path/path.dart' as p;
 
 import 'editor_screen.dart';
 
 class ProjectWorkspaceScreen extends StatefulWidget {
-  const ProjectWorkspaceScreen({
-    super.key,
-    required this.projectPath,
-  });
+  const ProjectWorkspaceScreen({super.key, required this.projectPath});
 
   final String projectPath;
 
   @override
-  State<ProjectWorkspaceScreen> createState() =>
-      _ProjectWorkspaceScreenState();
+  State<ProjectWorkspaceScreen> createState() => _ProjectWorkspaceScreenState();
 }
 
-class _ProjectWorkspaceScreenState
-    extends State<ProjectWorkspaceScreen> {
-  late final String _root;
-  late String _currentDirectory;
-
-  List<FileSystemEntity> _entries = [];
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _root = p.normalize(p.absolute(widget.projectPath));
-    _currentDirectory = _root;
-
-    _loadFiles();
-  }
-
-  Future<void> _loadFiles() async {
-    try {
-      final entries = await Directory(_currentDirectory)
-          .list(followLinks: false)
-          .toList();
-
-      entries.sort((a, b) {
-        if (a is Directory && b is! Directory) return -1;
-        if (a is! Directory && b is Directory) return 1;
-
-        return p
-            .basename(a.path)
-            .toLowerCase()
-            .compareTo(p.basename(b.path).toLowerCase());
-      });
-
-      if (!mounted) return;
-
-      setState(() {
-        _entries = entries;
-        _error = null;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _error = e.toString());
-    }
-  }
-
-  Future<void> _openDirectory(String path) async {
-    final normalized = p.normalize(p.absolute(path));
-
-    if (!p.equals(normalized, _root) &&
-        !p.isWithin(_root, normalized)) {
-      return;
-    }
-
-    setState(() {
-      _currentDirectory = normalized;
-    });
-
-    await _loadFiles();
-  }
-
-  Future<void> _openFile(String path) async {
-    const editableExtensions = {
-      '.json',
-      '.jsonc',
-      '.js',
-      '.ts',
-      '.py',
-      '.mcfunction',
-      '.lang',
-      '.txt',
-      '.md',
-      '.yaml',
-      '.yml',
-    };
-
-    if (!editableExtensions.contains(
-      p.extension(path).toLowerCase(),
-    )) {
-      setState(() {
-        _error = 'This file type is not supported by Raw Editor.';
-      });
-      return;
-    }
-
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => EditorScreen(
-          projectPath: _root,
-          filePath: path,
-        ),
-      ),
-    );
-
-    if (mounted) await _loadFiles();
-  }
+class _ProjectWorkspaceScreenState extends State<ProjectWorkspaceScreen> {
+  String? _selectedFile;
 
   @override
   Widget build(BuildContext context) {
+    final root = p.normalize(p.absolute(widget.projectPath));
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(p.basename(_root)),
-        actions: [
-          IconButton(
-            tooltip: 'Refresh',
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadFiles,
-          ),
-        ],
-      ),
-      body: Column(
+      appBar: AppBar(title: Text(p.basename(root))),
+
+      body: Row(
         children: [
-          ListTile(
-            title: const Text('Project Explorer'),
-            subtitle: Text(_currentDirectory),
+          SizedBox(
+            width: 280,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
+                    'EXPLORER',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ),
+                Row(children: [
+                  Padding(padding: EdgeInsets.all(12), child: FButton(child: Icon(Icons.add), onPress: (){}),),
+                  Padding(padding: EdgeInsets.all(12), child: FButton(child: Icon(Icons.arrow_back), onPress: (){}),)
+                ]),
+                const Divider(height: 1),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      ProjectTreeNode(
+                        path: root,
+                        depth: 0,
+                        selectedFile: _selectedFile,
+                        onFileSelected: (file) {
+                          setState(() {
+                            _selectedFile = file;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-
-          if (_error != null)
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                _error!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-
-          if (!p.equals(_currentDirectory, _root))
-            ListTile(
-              leading: const Icon(Icons.arrow_upward),
-              title: const Text('Go to parent folder'),
-              onTap: () => _openDirectory(
-                p.dirname(_currentDirectory),
-              ),
-            ),
-
+          const VerticalDivider(width: 1),
           Expanded(
-            child: ListView.builder(
-              itemCount: _entries.length,
-              itemBuilder: (context, index) {
-                final entry = _entries[index];
-                final isDirectory = entry is Directory;
-
-                return ListTile(
-                  leading: Icon(
-                    isDirectory
-                        ? Icons.folder
-                        : Icons.description,
+            child: _selectedFile == null
+                ? const Center(child: Text('Select a file to begin editing'))
+                : EditorScreen(
+                    key: ValueKey(_selectedFile),
+                    projectPath: root,
+                    filePath: _selectedFile!,
                   ),
-                  title: Text(p.basename(entry.path)),
-                  subtitle: Text(
-                    isDirectory ? 'Folder' : 'File',
-                  ),
-                  onTap: () {
-                    if (isDirectory) {
-                      _openDirectory(entry.path);
-                    } else if (entry is File) {
-                      _openFile(entry.path);
-                    }
-                  },
-                );
-              },
-            ),
           ),
         ],
       ),
     );
+  }
+}
+
+class ProjectTreeNode extends StatelessWidget {
+  const ProjectTreeNode({
+    super.key,
+    required this.path,
+    required this.depth,
+    required this.onFileSelected,
+    this.selectedFile,
+  });
+  final String path;
+  final int depth;
+  final String? selectedFile;
+  final ValueChanged<String> onFileSelected;
+
+  static const editableExtenstions = {
+    '.json',
+    '.jsonc',
+    '.js',
+    '.ts',
+    '.py',
+    '.mcfunction',
+    '.lang',
+    '.txt',
+    '.md',
+    '.yaml',
+    '.yml',
+  };
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<FileSystemEntity>>(
+      future: _readDirectory(path),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Padding(
+            padding: EdgeInsets.all(8),
+            child: Text('Cannot red directory'),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const Padding(
+            padding: EdgeInsets.all(8),
+            child: LinearProgressIndicator(),
+          );
+        }
+
+        return ExpansionTile(
+          initiallyExpanded: depth == 0,
+          tilePadding: EdgeInsets.only(left: 4.0 + depth * 10, right: 8),
+          leading: const Icon(Icons.folder, size: 18),
+          title: Text(
+            p.basename(path),
+            style: const TextStyle(fontSize: 13),
+            overflow: TextOverflow.ellipsis,
+          ),
+          childrenPadding: EdgeInsets.zero,
+          children: [
+            for (final entry in snapshot.data!)
+              if (entry is Directory)
+                ProjectTreeNode(
+                  key: ValueKey(entry.path),
+                  path: entry.path,
+                  depth: depth + 1,
+                  selectedFile: selectedFile,
+                  onFileSelected: onFileSelected,
+                )
+              else if (entry is File)
+                ListTile(
+                  dense: true,
+                  minTileHeight: 30,
+                  contentPadding: EdgeInsets.only(
+                    left: 24.0 + depth * 10,
+                    right: 8,
+                  ),
+                  leading: const Icon(Icons.description_outlined, size: 16),
+                  title: Text(
+                    p.basename(entry.path),
+                    style: const TextStyle(fontSize: 12),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  selected: selectedFile == entry.path,
+                  onTap: () {
+                    if (editableExtenstions.contains(
+                      p.extension(entry.path).toLowerCase(),
+                    )) {
+                      onFileSelected(entry.path);
+                    }
+                  },
+                ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<List<FileSystemEntity>> _readDirectory(String directory) async {
+    final entries = await Directory(directory)
+        .list(followLinks: false)
+        .where((entry) => entry is! Link)
+        .toList();
+
+    entries.sort((a, b) {
+      if (a is Directory && b is! Directory) {
+        return -1;
+      }
+      if (a is! Directory && b is Directory) {
+        return 1;
+      }
+      return p
+          .basename(a.path)
+          .toLowerCase()
+          .compareTo(p.basename(b.path).toLowerCase());
+    });
+    return entries;
   }
 }
