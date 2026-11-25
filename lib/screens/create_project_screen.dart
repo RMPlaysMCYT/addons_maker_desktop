@@ -208,8 +208,9 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                               return 'Use a lowercase namespace (not minecraft)';
                             }
                             if (_framework == ProjectFramework.anvil) {
-                              if (ns.length > 8)
+                              if (ns.length > 8) {
                                 return 'Anvil namespace: at most 8 characters';
+                              }
                               final initials = ProjectGenerator.projectInitials(
                                 _name.text.trim(),
                               );
@@ -248,7 +249,7 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<ProjectFramework>(
-                          value: _framework,
+                          initialValue: _framework,
                           decoration: const InputDecoration(
                             labelText: 'Development framework',
                             border: OutlineInputBorder(),
