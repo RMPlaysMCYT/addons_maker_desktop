@@ -60,7 +60,7 @@ class TemplateGenerator {
     };
 
     Map<String, Object?> blockWith(Map<String, Object?> extra){
-      final block = Map<String, Object?>.from(baseblock['minecraft:block'] as Map);
+      final block = Map<String, Object?>.from(baseBlock['minecraft:block'] as Map);
       final components = Map<String, Object?>.from(block['components'] as Map);
       components.addAll(extra);
       block['components'] = components;
@@ -102,7 +102,7 @@ class TemplateGenerator {
         files[entityPath] = _entity(id, version);
 
       case AddonTemplate.vehicle:
-        files[entityPath] = _entity(id, version);
+        files[entityPath] = _vehicle(id, version);
     }
     
     for (final path in files.keys){
@@ -119,11 +119,65 @@ class TemplateGenerator {
 
     try{
       for (final entry in files.entries){
-
+        final file = File(entry.key);
+        await file.parent.create(recursive: true);
+        await file.writeAsString('${const JsonEncoder.withIndent('  ').convert(entry.value)}\n', flush: true);
+        written.add(file.path);
       }
     } catch (_) {
-      
+      for (final path in written.reversed) {
+        try { await File(path).delete(); } catch (_) {}
+      }
+      rethrow;
     }
 
+    return GeneratedTemplate(paths: written, isScaffold: request.template.requiresFollowUp, notes: request.template.note);
+
   }
+
+
+  static Map<String, Object?> _item(String id, String label, String version) => {
+    'format_version': version,
+    'minecraft:item': {
+      'description': {'identifier': id, 'menu_category':{'category'}},
+      'components': {
+                'minecraft:display_name': {'value': label},
+        'minecraft:max_stack_size': 64,
+        'minecraft:icon': {'texture': 'apple'},
+      }
+    },
+  };
+
+
+    static Map<String, Object?> _entity(String id, String version) => {
+    'format_version': version,
+    'minecraft:entity': {
+      'description': {'identifier': id, 'is_spawnable': true, 'is_summonable': true},
+      'components': {
+        'minecraft:type_family': {'family': ['mob']},
+        'minecraft:health': {'value': 20, 'max': 20},
+        'minecraft:physics': {},
+        'minecraft:collision_box': {'width': 0.6, 'height': 1.8},
+        'minecraft:movement': {'value': 0.2},
+        'minecraft:movement.basic': {},
+        'minecraft:navigation.walk': {},
+        'minecraft:jump.static': {},
+        'minecraft:behavior.random_stroll': {'priority': 6},
+        'minecraft:behavior.look_at_player': {'priority': 7},
+      },
+    },
+  };
+
+  static Map<String, Object?> _vehicle(String id, String version) => {
+    'format_version': version,
+    'minecraft:entity': {
+      'description': {'identifier': id, 'is_spawnable': true, 'is_summonable': true},
+      'components': {
+        'minecraft:health': {'value': 40, 'max': 40},
+        'minecraft:physics': {},
+        'minecraft:collision_box': {'width': 1.6, 'height': 1.2},
+        'minecraft:rideable': {'seat_count': 1, 'seats': [{'position': [0, 0.5, 0]}]},
+      },
+    },
+  };
 }
