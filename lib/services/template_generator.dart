@@ -180,4 +180,49 @@ class TemplateGenerator {
       },
     },
   };
+
+
+    Future<String> _framework(String root) async {
+    final meta = File(p.join(root, '.addons-maker', 'project.json'));
+    if (await meta.exists()) {
+      try {
+        final decoded = jsonDecode(await meta.readAsString());
+        if (decoded is Map && decoded['framework'] is String) {
+          return decoded['framework'] as String;
+        }
+      } catch (_) {}
+    }
+    if (await File(p.join(root, 'anvilconfig.json')).exists()) return 'anvil';
+    final config = File(p.join(root, 'config.json'));
+    if (await config.exists()) {
+      try {
+        final decoded = jsonDecode(await config.readAsString());
+        if (decoded is Map && decoded['regolith'] is Map) return 'regolith';
+        if (decoded is Map && (decoded['bridge'] is Map || decoded['compiler'] is Map)) return 'bridge';
+      } catch (_) {}
+    }
+    if (await File(p.join(root, 'BP', 'manifest.json')).exists()) return 'standard';
+    return 'unknown';
+  }
+
+  Future<(String, String)> _regolithPacks(String root) async {
+    final config = jsonDecode(await File(p.join(root, 'config.json')).readAsString());
+    if (config is! Map || config['packs'] is! Map) {
+      throw const FormatException('Regolith config is missing packs.');
+    }
+    final packs = config['packs'] as Map;
+    final bp = packs['behaviorPack'];
+    final rp = packs['resourcePack'];
+    if (bp is! String || rp is! String) {
+      throw const FormatException('Regolith source pack paths are missing.');
+    }
+    final bpPath = p.normalize(p.join(root, bp));
+    final rpPath = p.normalize(p.join(root, rp));
+    for (final path in [bpPath, rpPath]) {
+      if (!p.isWithin(root, path)) {
+        throw StateError('Regolith pack path must stay inside the project root.');
+      }
+    }
+    return (bpPath, rpPath);
+  }
 }
