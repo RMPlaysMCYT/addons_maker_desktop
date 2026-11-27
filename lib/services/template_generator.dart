@@ -37,7 +37,42 @@ class TemplateGenerator {
 
 
 
+    final name = request.identifier.split(':').last;
+    final id = request.identifier;
+    final version = request.minecraftFormatVersion;
+    final label = request.displayName.trim().isEmpty
+      ? name
+      : request.displayName.trim();
+    final baseblock = <String, Object?> {
+      'format_version': version,
+      'minecraft:block': {
+        'description': {'identifier': id},
+        'components': <String, Object?>{
+          'minecraft:display_name': label,
+          'minecraft:geometry': 'minecraft:geometry.full_block',
+          'minecraft:material_instances': {
+            '*': {'texture': 'dirt', 'render_method': 'opaque'},
+          },
+        },
+      },
+    };
+
+    Map<String, Object?> blockWith(Map<String, Object?> extra){
+      final block = Map<String, Object?>.from(baseblock['minecraft:block'] as Map);
+      final components = Map<String, Object?>.from(block['components'] as Map);
+      components.addAll(extra);
+      block['components'] = components;
+      return {
+        'format_version': version,
+        'minecraft:block': block
+      };
+    }
+
+    final blockPath = p.join(bp, 'blocks', '$name.json');
+    final itemPath = p.join(bp, 'items', '$name.json');
+    final entityPath = p.join(bp, 'entities', '$name.json');
 
 
+    
   }
 }
