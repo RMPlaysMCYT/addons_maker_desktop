@@ -20,7 +20,7 @@ class TemplateGenerator {
       throw const FileSystemException('Project Folder does not exist');
     }
 
-    final framework = await _framework(root)
+    final framework = await _framework(root);
     if(framework == 'anvil'){
       throw UnsupportedError('Anvil Requires Python Source Adaptor, No generated packs were changed');
     }
