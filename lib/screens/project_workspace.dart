@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:addons_maker_desktop/models/addon_tempate.dart';
+import 'package:addons_maker_desktop/screens/editor/template_picker_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
@@ -63,7 +64,7 @@ class _ProjectWorkspaceScreenState extends State<ProjectWorkspaceScreen> {
   void _showOverview() {
     setState(() {
       _activeFile = null;
-      _selectedCategory = null;      
+      _selectedCategory = null;
     });
   }
 
@@ -219,24 +220,22 @@ class _ProjectWorkspaceScreenState extends State<ProjectWorkspaceScreen> {
 
                 // Active editor or Project Overview
                 Expanded(
-                  child: _activeFile == null
-                      ? ProjectOverview(
-                          projectPath: root,
-                          onCategorySelected: (category) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '$category visual editor '
-                                  'is not connected yet',
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : EditorScreen(
+                  child: _activeFile != null
+                      ? EditorScreen(
                           key: ValueKey(_activeFile),
                           projectPath: root,
                           filePath: _activeFile!,
+                        )
+                      : _selectedCategory != null
+                      ? TemplatePickerScreen(
+                          key: ValueKey(_selectedCategory),
+                          projectPath: root,
+                          category: _selectedCategory!,
+                          onGenerated: _openFileTab,
+                        )
+                      : ProjectOverview(
+                          projectPath: root,
+                          onCategorySelected: _openCategory,
                         ),
                 ),
               ],

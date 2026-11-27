@@ -44,6 +44,8 @@ class _EditorScreenState extends State<EditorScreen> {
 
       if (!mounted) return;
 
+      final controller = CodeLineEditingController.fromText(content);
+      controller.addListener(_markDirty);
       setState(() {
         _controller = CodeLineEditingController.fromText(content);
         _dirty = false;
@@ -60,7 +62,7 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   void _markDirty() {
-    if (!mounted) return;
+    if (!mounted || _dirty) return;
 
     setState(() => _dirty = true);
   }
