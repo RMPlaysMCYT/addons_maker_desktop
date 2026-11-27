@@ -43,7 +43,9 @@ class TemplateGenerator {
     final label = request.displayName.trim().isEmpty
       ? name
       : request.displayName.trim();
-    final baseblock = <String, Object?> {
+
+    final files = <String, Object>{};
+    final baseBlock = <String, Object?> {
       'format_version': version,
       'minecraft:block': {
         'description': {'identifier': id},
@@ -72,7 +74,56 @@ class TemplateGenerator {
     final itemPath = p.join(bp, 'items', '$name.json');
     final entityPath = p.join(bp, 'entities', '$name.json');
 
+    switch (request.template){
+      case AddonTemplate.basicBlock:
+        files[blockPath] = baseBlock;
 
+      case AddonTemplate.geometryBlock:
+        files[blockPath] = baseBlock;
+
+      case AddonTemplate.interactiveBlock:
+        files[blockPath] = baseBlock;
+
+      case AddonTemplate.crafttingTableBlock:
+        files[blockPath] = blockWith({
+          'minecraft:crafting_table':{'crafting_tags':['crafting_table', '${id.split(':').first}_crafting']},
+      });
+
+      case AddonTemplate.basicItem:
+        files[itemPath] = _item(id, label, version);
+
+      case AddonTemplate.attachableItem:
+        files[itemPath] = _item(id, label, version);
+
+      case AddonTemplate.basicMob:
+        files[entityPath] = _entity(id, version);
+
+      case AddonTemplate.skeletonMob:
+        files[entityPath] = _entity(id, version);
+
+      case AddonTemplate.vehicle:
+        files[entityPath] = _entity(id, version);
+    }
     
+    for (final path in files.keys){
+      final normalized = p.normalize(path);
+      if(!(p.isWithin(root, normalized) || p.equals(root, normalized))){
+        throw StateError('Generated Outside the root?');
+      }
+      if (await File(path).exists() || await Directory(path).exists()) {
+        throw FileSystemException('Refusing to overwrite existing content.', path);
+      }
+    }
+
+    final written = <String>[];
+
+    try{
+      for (final entry in files.entries){
+
+      }
+    } catch (_) {
+      
+    }
+
   }
 }
