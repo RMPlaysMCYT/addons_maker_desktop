@@ -1,0 +1,19 @@
+{
+  "_notice": "App-specific reference only. Do not include this file in Minecraft packs.",
+  "kind": "basic_item",
+  "identifier": "rmstarter:basic_item",
+  "displayName": "Sample Item",
+  "templateFiles": [
+    "BP/items/basic_item.json",
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json",
+    "RP/textures/item_texture.json",
+    "RP/textures/items/basic_item.png"
+  ],
+  "mergeInsteadOfOverwrite": [
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json",
+    "RP/textures/item_texture.json"
+  ],
+  "notes": "Use configured BP/RP source directories. Do not import manifests from this example when adding to an existing project."
+}

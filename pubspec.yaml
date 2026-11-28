@@ -80,7 +80,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  assets:
+    - assets/bedrock_templates/basic_block/BP/blocks/
+    - assets/bedrock_templates/basic_block/RP/textures/blocks/
+    - assets/bedrock_templates/basic_item/BP/items/
+    - assets/bedrock_templates/basic_item/RP/textures/items/
+    - assets/bedrock_templates/basic_mob/BP/entities/
+    - assets/bedrock_templates/basic_mob/RP/entity/
+    - assets/bedrock_templates/basic_mob/RP/models/entity/
+    - assets/bedrock_templates/basic_mob/RP/textures/entity/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

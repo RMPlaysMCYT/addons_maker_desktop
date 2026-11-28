@@ -41,7 +41,7 @@ class PackArtworkService {
         .writeAsBytes(packIconPng, flush: true);
 
     if (bugPackIconPng != null) {
-      await File(p.join(directory.path, 'pack_icon.png'))
+      await File(p.join(directory.path, 'bug_pack_icon.png'))
           .writeAsBytes(packIconPng, flush: true);
     }
   }
@@ -54,7 +54,7 @@ class PackArtworkService {
   }) async {
     final sourceDirectory = _iconDirectory(projectPath);
     final mainIcon = File(p.join(sourceDirectory, 'pack_icon.png'));
-    final bugIcon = File(p.join(sourceDirectory, 'pack_icon.png'));
+    final bugIcon = File(p.join(sourceDirectory, 'bug_pack_icon.png'));
 
     if (!await mainIcon.exists()) {
       throw const FileSystemException('No Project pack_icon was found');

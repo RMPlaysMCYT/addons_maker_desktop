@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Sample Item - BP",
+    "description": "Sample Item Behavior Pack",
+    "uuid": "787cb2c4-9262-4a1f-a594-8efe6e6b305f",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "56bbc74b-222f-4c62-98b5-ffe3e1c34431",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "5ef2c753-0aff-4ca4-bb23-2044bf6073fb",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

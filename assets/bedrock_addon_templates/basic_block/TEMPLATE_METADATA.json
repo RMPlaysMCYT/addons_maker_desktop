@@ -1,0 +1,21 @@
+{
+  "_notice": "App-specific reference only. Do not include this file in Minecraft packs.",
+  "kind": "basic_block",
+  "identifier": "rmstarter:basic_block",
+  "displayName": "Sample Block",
+  "templateFiles": [
+    "BP/blocks/basic_block.json",
+    "RP/blocks.json",
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json",
+    "RP/textures/blocks/basic_block.png",
+    "RP/textures/terrain_texture.json"
+  ],
+  "mergeInsteadOfOverwrite": [
+    "RP/blocks.json",
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json",
+    "RP/textures/terrain_texture.json"
+  ],
+  "notes": "Use configured BP/RP source directories. Do not import manifests from this example when adding to an existing project."
+}

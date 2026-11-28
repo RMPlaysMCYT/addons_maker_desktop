@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Sample Mob - RP",
+    "description": "Sample Mob Resource Pack",
+    "uuid": "d5270d48-096f-46b2-8de6-84ca2614da4a",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "9fd84f69-7e0b-4a4c-9689-172a33e84808",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

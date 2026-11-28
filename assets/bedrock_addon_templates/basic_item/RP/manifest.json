@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Sample Item - RP",
+    "description": "Sample Item Resource Pack",
+    "uuid": "5ef2c753-0aff-4ca4-bb23-2044bf6073fb",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "5c8c63e6-d0f2-4ccc-8b2f-0c8992e92c0f",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

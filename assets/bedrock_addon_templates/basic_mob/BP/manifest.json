@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Sample Mob - BP",
+    "description": "Sample Mob Behavior Pack",
+    "uuid": "33f0c0c6-abe9-4bba-ae5e-ef98be7076ee",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "87c9b69b-06b1-4e21-8ee4-933b5f716e5e",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "d5270d48-096f-46b2-8de6-84ca2614da4a",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}

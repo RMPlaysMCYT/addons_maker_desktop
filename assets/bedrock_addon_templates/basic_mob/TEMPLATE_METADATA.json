@@ -1,0 +1,19 @@
+{
+  "_notice": "App-specific reference only. Do not include this file in Minecraft packs.",
+  "kind": "basic_mob",
+  "identifier": "rmstarter:basic_mob",
+  "displayName": "Sample Mob",
+  "templateFiles": [
+    "BP/entities/basic_mob.json",
+    "RP/entity/basic_mob.entity.json",
+    "RP/models/entity/basic_mob.geo.json",
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json",
+    "RP/textures/entity/basic_mob.png"
+  ],
+  "mergeInsteadOfOverwrite": [
+    "RP/texts/en_US.lang",
+    "RP/texts/languages.json"
+  ],
+  "notes": "Use configured BP/RP source directories. Do not import manifests from this example when adding to an existing project."
+}

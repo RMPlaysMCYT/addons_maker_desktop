@@ -1,0 +1,39 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Sample Block - BP",
+    "description": "Sample Block Behavior Pack",
+    "uuid": "df200318-1c07-4fbe-83cf-4867efc9f1b7",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      80
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "efea36b8-c07d-4b3f-bb97-616146158cd7",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "e0061319-b058-4251-a797-afdd5cf9fd61",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
