@@ -1,3 +1,4 @@
+import 'package:addons_maker_desktop/services/pack_artwork_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:forui/forui.dart' show FButton;
@@ -6,6 +7,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/framework_config.dart';
 import '../services/prerequisite_service.dart';
 import '../services/project_generator.dart';
+
+import 'dart:io';
+
+import 'package:path/path.dart' as p;
 
 class CreateProjectScreen extends StatefulWidget {
   const CreateProjectScreen({super.key});
@@ -39,6 +44,11 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
   String? _error;
   bool _busy = false;
 
+  String? _packIconPath;
+  String? _bugPackIconPath;
+
+  final _artworkService = const PackArtworkService();
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +64,35 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
     _anvilCompany.dispose();
     _anvilDisplayName.dispose();
     super.dispose();
+  }
+
+  Future<void> _chooseArtwork({required bool isBugIcon}) async {
+    try {
+      final selected = await FilePicker.pickFile(
+        dialogTitle: isBugIcon ? 'Choose Bug Pack Icon' : 'Choose Pack Icon',
+        type: FileType.custom,
+        allowedExtensions: ['png', 'jpg', 'jpeg'],
+      );
+      if (selected == null || !mounted) return;
+      final path = selected.path;
+      if (path == null) {
+        throw const FormatException('Unable to access the selected image.');
+      }
+      setState(() {
+        if (isBugIcon) {
+          _bugPackIconPath = path;
+        } else {
+          _packIconPath = path;
+        }
+        _error = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _error = 'Image selection failed: $e';
+      });
+    }
   }
 
   Future<void> _selectFolder() async {
