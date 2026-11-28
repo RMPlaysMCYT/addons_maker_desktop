@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 enum ProjectFramework { standard, bridge, regolith, anvil }
 enum PrerequisiteChoice { install, locate, skip }
@@ -55,6 +56,9 @@ class ProjectCreationRequest {
     this.anvilMinify = false,
     this.anvilLocalExport = false,
     this.anvilAddStamp = true,
+
+    this.packIconPng,
+    this.bugPackIconPng,
   });
   final String name;
   final String namespace;
@@ -73,6 +77,9 @@ class ProjectCreationRequest {
   final bool anvilMinify;
   final bool anvilLocalExport;
   final bool anvilAddStamp;
+
+  final Uint8List? packIconPng;
+  final Uint8List? bugPackIconPng;
 }
 
 class FrameworkConfig {
