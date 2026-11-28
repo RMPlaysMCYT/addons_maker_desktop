@@ -151,11 +151,23 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
 
   Future<void> _create() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_packIconPath == null) {
+      setState(() {
+        _error = 'Choose a Pack Icon before creating the project.';
+      });
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;
     });
     try {
+      final packPng = await _artworkService.preparePNG(_packIconPath!);
+
+      final bugPng = _bugPackIconPath == null
+          ? null
+          : await _artworkService.preparePNG(_bugPackIconPath!);
+
       final request = ProjectCreationRequest(
         name: _name.text,
         namespace: _namespace.text,
@@ -173,6 +185,8 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
         anvilMinify: _anvilMinify,
         anvilLocalExport: _anvilLocalExport,
         anvilAddStamp: _anvilAddStamp,
+        packIconPng: packPng,
+        bugPackIconPng: bugPng,
       );
       if (_framework != ProjectFramework.standard &&
           _choice == PrerequisiteChoice.locate &&
@@ -232,6 +246,78 @@ class _CreateProjectScreenState extends State<CreateProjectScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        const SizedBox(height: 20),
+
+                        const Text(
+                          'Project Artwork',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        const Text(
+                          'Choose a pack icon and an optional fallback icon. '
+                          'Both will be converted to 256x256 PNG.',
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        OutlinedButton.icon(
+                          onPressed: _busy
+                              ? null
+                              : () => _chooseArtwork(isBugIcon: false),
+                          icon: const Icon(Icons.image_outlined),
+                          label: Text(
+                            _packIconPath == null
+                                ? 'Choose Pack Icon'
+                                : p.basename(_packIconPath!),
+                          ),
+                        ),
+
+                        if (_packIconPath != null) ...[
+                          const SizedBox(height: 8),
+                          Image.file(
+                            File(_packIconPath!),
+                            width: 96,
+                            height: 96,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, error, stackTrace) =>
+                                const Text('Cannot preview the image'),
+                          ),
+                        ],
+
+                        const SizedBox(height: 12),
+
+                        OutlinedButton.icon(
+                          onPressed: _busy
+                              ? null
+                              : () => _chooseArtwork(isBugIcon: true),
+                          icon: const Icon(Icons.broken_image_outlined),
+                          label: Text(
+                            _bugPackIconPath == null
+                                ? 'Choose Bug Pack Icon (Optional)'
+                                : p.basename(_bugPackIconPath!),
+                          ),
+                        ),
+
+                        if (_bugPackIconPath != null)
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: _busy
+                                  ? null
+                                  : () => setState(() {
+                                      _bugPackIconPath = null;
+                                    }),
+                              icon: const Icon(Icons.close, size: 16),
+                              label: const Text('Remove optional image'),
+                            ),
+                          ),
+
+                        const SizedBox(height: 16),
                         TextFormField(
                           controller: _name,
                           decoration: const InputDecoration(

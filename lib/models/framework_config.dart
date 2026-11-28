@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 enum ProjectFramework { standard, bridge, regolith, anvil }
+
 enum PrerequisiteChoice { install, locate, skip }
 
 extension ProjectFrameworkDetails on ProjectFramework {
@@ -12,10 +13,13 @@ extension ProjectFrameworkDetails on ProjectFramework {
     ProjectFramework.anvil => 'Anvil (StarkTMA)',
   };
   String get description => switch (this) {
-    ProjectFramework.standard => 'Native behavior/resource packs; no external compiler.',
+    ProjectFramework.standard =>
+      'Native behavior/resource packs; no external compiler.',
     ProjectFramework.bridge => 'bridge. v2 project with Dash configuration and optional standalone Dash CLI.',
-    ProjectFramework.regolith => 'Regolith pack sources, configuration and named build profiles.',
-    ProjectFramework.anvil => 'Python-first project; initialized by the installed Anvil CLI.',
+    ProjectFramework.regolith =>
+      'Regolith pack sources, configuration and named build profiles.',
+    ProjectFramework.anvil =>
+      'Python-first project; initialized by the installed Anvil CLI.',
   };
   String get id => switch (this) {
     ProjectFramework.standard => 'standard',
@@ -31,9 +35,15 @@ extension ProjectFrameworkDetails on ProjectFramework {
   };
   Uri? get installationUrl => switch (this) {
     ProjectFramework.standard => null,
-    ProjectFramework.bridge => Uri.parse('https://github.com/bridge-core/deno-dash-compiler'),
-    ProjectFramework.regolith => Uri.parse('https://regolith-docs.readthedocs.io/en/stable/introduction/installation/'),
-    ProjectFramework.anvil => Uri.parse('https://github.com/StarkTMA/Anvil#installation'),
+    ProjectFramework.bridge => Uri.parse(
+      'https://github.com/bridge-core/deno-dash-compiler',
+    ),
+    ProjectFramework.regolith => Uri.parse(
+      'https://regolith-docs.readthedocs.io/en/stable/introduction/installation/',
+    ),
+    ProjectFramework.anvil => Uri.parse(
+      'https://github.com/StarkTMA/Anvil#installation',
+    ),
   };
 }
 
@@ -103,11 +113,12 @@ class FrameworkConfig {
       if (request.framework.executable != null)
         request.framework.executable!: prerequisiteStatus,
     },
-    if (request.framework == ProjectFramework.anvil) 'anvilOptions': {
-      'addon': request.anvilAddon,
-      'scriptapi': request.anvilScriptApi,
-      'generatedBy': projectStatus == 'ready' ? 'anvil init' : 'none',
-    },
+    if (request.framework == ProjectFramework.anvil)
+      'anvilOptions': {
+        'addon': request.anvilAddon,
+        'scriptapi': request.anvilScriptApi,
+        'generatedBy': projectStatus == 'ready' ? 'anvil init' : 'none',
+      },
     if (request.customExecutable != null)
       'customExecutable': request.customExecutable,
   };
@@ -131,7 +142,11 @@ class FrameworkConfig {
       'formatVersion': '1.4.0',
       'profiles': {
         'default': {
-          'export': {'build': 'standard', 'readOnly': false, 'target': 'development'},
+          'export': {
+            'build': 'standard',
+            'readOnly': false,
+            'target': 'development',
+          },
           'filters': <Object>[],
         },
       },

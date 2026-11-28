@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 import '../models/framework_config.dart';
 import 'prerequisite_service.dart';
 
+import '../services/pack_artwork_service.dart';
+
 class ProjectGenerator {
   const ProjectGenerator(this.prerequisites);
   final PrerequisiteService prerequisites;
@@ -41,38 +43,81 @@ class ProjectGenerator {
         'Namespace must start with a lowercase letter, use a-z/0-9/_, and must not be minecraft.',
       );
     }
+
+    // Validate Anvil-specific naming.
     if (request.framework == ProjectFramework.anvil) {
       if (!_anvilProject.hasMatch(name)) {
         throw const FormatException(
-          'Anvil project name: 1–16 lowercase letters, digits or underscores; begin with a letter.',
+          'Anvil project name must be 1-16 lowercase '
+          'letters, digits or underscores.',
         );
       }
+
       if (ns.length > 8) {
         throw const FormatException(
           'Anvil namespace is limited to 8 characters.',
         );
       }
+
       if (request.anvilAddon && !ns.endsWith(projectInitials(name))) {
         throw FormatException(
-          'Anvil addon namespace must end with the project initials: ${projectInitials(name)} (e.g., rm_${projectInitials(name)}).',
+          'Anvil namespace must end with the '
+          'project initials: ${projectInitials(name)}',
         );
       }
     }
-    final parent = Directory(request.parentDirectory.trim());
+
+    // Check the parent project directory.
+    final parent = Directory(
+      p.normalize(p.absolute(request.parentDirectory.trim())),
+    );
+
     if (!await parent.exists()) {
       throw const FileSystemException('Choose an existing parent directory.');
     }
+
+    // Construct the new project path.
     final root = p.normalize(p.join(parent.path, name));
+
+    // Never overwrite another project.
     if (await File(root).exists() || await Directory(root).exists()) {
       throw const FileSystemException(
-        'The project path already exists. Choose another name.',
+        'Project already exists. Choose another name.',
       );
     }
 
-    if (request.framework == ProjectFramework.anvil) {
-      return _createAnvil(request, root, parent.path);
+    final createdRoot = request.framework == ProjectFramework.anvil
+        ? await _createAnvil(request, root, parent.path)
+        : await _createBedrockOrOther(request, root);
+
+    final iconBytes = request.packIconPng;
+
+    if (iconBytes != null) {
+      const artwork = PackArtworkService();
+
+      // Save the original project artwork.
+      await artwork.saveProjectArtwork(
+        projectPath: createdRoot,
+        packIconPng: iconBytes,
+        bugPackIconPng: request.bugPackIconPng,
+      );
+
+      // Standard, bridge. and Regolith already have source BP/RP folders.
+      if (request.framework != ProjectFramework.anvil) {
+        final prefix = request.framework == ProjectFramework.regolith
+            ? 'packs'
+            : '';
+
+        await artwork.copyToPacks(
+          projectPath: createdRoot,
+          bpPath: p.join(createdRoot, prefix, 'BP'),
+          rpPath: p.join(createdRoot, prefix, 'RP'),
+          copyBugIcontoBP: true,
+        );
+      }
     }
-    return _createBedrockOrOther(request, root);
+
+    return createdRoot;
   }
 
   Future<void> _writeJson(String root, String relative, Object document) async {
