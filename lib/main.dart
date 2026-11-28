@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:addons_maker_desktop/services/recent_projects_service.dart';
 import 'package:forui/forui.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'dart:io';
 
@@ -17,8 +18,6 @@ void main() {
 
 class Application extends StatelessWidget {
   const Application({super.key});
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,6 @@ class Application extends StatelessWidget {
   }
 }
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -70,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadRecentProjects();
+    _loadAppVersion();
   }
 
   Future<void> _loadRecentProjects() async {
@@ -127,10 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       await Navigator.of(context).push(
         MaterialPageRoute<void>(
-          builder: (_) => ProjectWorkspaceScreen(
-            key: ValueKey(root),
-            projectPath: root,
-          ),
+          builder: (_) =>
+              ProjectWorkspaceScreen(key: ValueKey(root), projectPath: root),
         ),
       );
 
@@ -182,127 +179,164 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  String _appVersion = 'Loading...';
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+
+      if (!mounted) return;
+
+      setState(() {
+        _appVersion = '${info.version}+${info.buildNumber}';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _appVersion = 'Unknown');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMac = Platform.isMacOS;
 
     return CallbackShortcuts(
       bindings: {
-        SingleActivator(
-          LogicalKeyboardKey.keyO,
-          control: !isMac,
-          meta: isMac,
-        ): _pickProject,
-        SingleActivator(
-          LogicalKeyboardKey.keyN,
-          control: !isMac,
-          meta: isMac,
-        ): _createProject,
+        SingleActivator(LogicalKeyboardKey.keyO, control: !isMac, meta: isMac):
+            _pickProject,
+        SingleActivator(LogicalKeyboardKey.keyN, control: !isMac, meta: isMac):
+            _createProject,
       },
       child: Focus(
         autofocus: true,
         child: FScaffold(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100),
-              child: ListView(
-                padding: const EdgeInsets.all(32),
-                children: [
-                  const Text(
-                    'Minecraft Addons Maker Ultimate',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  const Text(
-                    'Pick up the project where you left off.',
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      FButton(
-                        variant: .primary,
-                        prefix: const Icon(Icons.folder_open),
-                        onPress: _pickProject,
-                        child: const Text('Open Project'),
-                      ),
-                      FButton(
-                        variant: .secondary,
-                        prefix: const Icon(Icons.add),
-                        onPress: _createProject,
-                        child: const Text('New Project'),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  const Text(
-                    'Recent Projects',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  if (_loading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  else if (_recentProjects.isEmpty)
-                    const Card(
+          child: LayoutBuilder(
+            builder: (context, viewport) {
+              return SingleChildScrollView(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: viewport.maxHeight),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 850),
                       child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: Center(
-                          child: Text(
-                            'No recent projects found.',
-                          ),
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            const Text(
+                              'Minecraft Addons Maker Ultimate',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            const Text(
+                              'Pick up the project where you left off.',
+                              textAlign: TextAlign.center,
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            Center(
+                              child: Wrap(
+                                spacing: 12,
+                                runSpacing: 12,
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  FButton(
+                                    variant: .primary,
+                                    prefix: const Icon(Icons.folder_open),
+                                    onPress: _pickProject,
+                                    child: const Text('Open Project'),
+                                  ),
+                                  FButton(
+                                    variant: .secondary,
+                                    prefix: const Icon(Icons.add),
+                                    onPress: _createProject,
+                                    child: const Text('New Project'),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 32),
+
+                            const Text(
+                              'Recent Projects',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            if (_loading)
+                              const Center(child: CircularProgressIndicator())
+                            else if (_recentProjects.isEmpty)
+                              const Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(24),
+                                  child: Center(
+                                    child: Text('No recent projects found.'),
+                                  ),
+                                ),
+                              )
+                            else
+                              for (final path in _recentProjects)
+                                Card(
+                                  child: ListTile(
+                                    leading: const Icon(Icons.folder_outlined),
+                                    title: Text(p.basename(path)),
+                                    subtitle: Text(
+                                      path,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    onTap: () => _openProject(path),
+                                    trailing: IconButton(
+                                      tooltip: 'Remove from recent list',
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () =>
+                                          _removeRecentProject(path),
+                                    ),
+                                  ),
+                                ),
+
+                            const SizedBox(height: 24),
+
+                            Text(
+                              isMac
+                                  ? '⌘+O  Open Project   •   ⌘+N  New Project'
+                                  : 'Ctrl+O  Open Project   •   Ctrl+N  New Project',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            Text(
+                              'Version $_appVersion',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    )
-                  else
-                    for (final path in _recentProjects)
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.folder_outlined,
-                          ),
-                          title: Text(p.basename(path)),
-                          subtitle: Text(
-                            path,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          onTap: () => _openProject(path),
-                          trailing: IconButton(
-                            tooltip: 'Remove from recent list',
-                            icon: const Icon(Icons.close),
-                            onPressed: () =>
-                                _removeRecentProject(path),
-                          ),
-                        ),
-                      ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    isMac
-                        ? '⌘+O  Open Project   •   ⌘+N  New Project'
-                        : 'Ctrl+O  Open Project   •   Ctrl+N  New Project',
-                    style: const TextStyle(fontSize: 12),
+                    ),
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),
