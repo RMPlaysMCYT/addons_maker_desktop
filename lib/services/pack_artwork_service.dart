@@ -39,5 +39,15 @@ class PackArtworkService {
   }) async {
     final directory = Directory(_iconDirectory(projectPath));
     await directory.create(recursive: true);
+
+    await File(
+      p.join(directory.path, 'pack_icon.png'),
+    ).writeAsBytes(packIconPng, flush: true);
+
+    if(bugPackIconPng != null){
+          await File(
+      p.join(directory.path, 'pack_icon.png'),
+    ).writeAsBytes(packIconPng, flush: true);
+    }
   }
 }
