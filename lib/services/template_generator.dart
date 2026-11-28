@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import './template_installer.dart';
+
 import 'package:path/path.dart' as p;
 
 import '../models/addon_tempate.dart';
@@ -40,6 +42,24 @@ class TemplateGenerator {
     }
 
     final name = request.identifier.split(':').last;
+
+    // Validate the Resource Pack too.
+    if (!await File(p.join(rp, 'manifest.json')).exists()) {
+      throw FileSystemException('No Resource Pack manifest found', rp);
+    }
+
+    // Use the complete BP + RP installer for
+    // the first three supported templates.
+    const basicTemplates = {
+      AddonTemplate.basicBlock,
+      AddonTemplate.basicItem,
+      AddonTemplate.basicMob,
+    };
+
+    if (basicTemplates.contains(request.template)) {
+      return const TemplateInstaller().install(request, bpPath: bp, rpPath: rp);
+    }
+
     final id = request.identifier;
     final version = request.minecraftFormatVersion;
     final label = request.displayName.trim().isEmpty
