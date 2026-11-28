@@ -56,10 +56,30 @@ class PackArtworkService {
     final mainIcon = File(p.join(sourceDirectory, 'pack_icon.png'));
     final bugIcon = File(p.join(sourceDirectory, 'pack_icon.png'));
 
-    if(!await mainIcon.exists()){
+    if (!await mainIcon.exists()) {
+      throw const FileSystemException('No Project pack_icon was found');
+    }
+
+    if (!await Directory(bpPath).exists() ||
+        !await Directory(rpPath).exists()) {
       throw const FileSystemException(
-        'No Project pack_icon was found'
+        'Behavior Pack or Resource Pack directory missing.',
       );
+    }
+
+    await mainIcon.copy(p.join(bpPath, 'pack_icon.png'));
+    await mainIcon.copy(p.join(rpPath, 'pack_icon.png'));
+
+
+    if(await bugIcon.exists()){
+      await bugIcon.copy(
+        p.join(rpPath, 'bug_pack_icon.png'),
+      );
+      if(copyBugIcontoBP){
+        await bugIcon.copy(
+          p.join(bpPath, 'bug_pack_icon.png'),
+        );
+      }
     }
   }
 }
