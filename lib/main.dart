@@ -1,3 +1,4 @@
+import 'package:addons_maker_desktop/screens/about_screen.dart';
 import 'package:addons_maker_desktop/screens/create_project_screen.dart';
 import 'package:addons_maker_desktop/screens/project_workspace.dart';
 import 'package:file_picker/file_picker.dart';
@@ -165,6 +166,18 @@ class _HomeScreenState extends State<HomeScreen> {
     await _openProject(path);
   }
 
+    Future<void> _aboutScreen() async {
+    final path = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AboutScreen(),
+    );
+
+    if (path == null || !mounted) return;
+
+    await _openProject(path);
+  }
+
   Future<void> _removeRecentProject(String path) async {
     try {
       final updated = await _recentService.remove(path);
@@ -310,24 +323,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
 
                             const SizedBox(height: 24),
+                            Row(
+                              children: [
+                                Text(
+                                  isMac
+                                      ? '⌘+O  Open Project   •   ⌘+N  New Project'
+                                      : 'Ctrl+O  Open Project   •   Ctrl+N  New Project',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
 
-                            Text(
-                              isMac
-                                  ? '⌘+O  Open Project   •   ⌘+N  New Project'
-                                  : 'Ctrl+O  Open Project   •   Ctrl+N  New Project',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 12),
-                            ),
+                                const SizedBox(width: 8),
 
-                            const SizedBox(height: 8),
-
-                            Text(
-                              'Version $_appVersion',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
-                              ),
+                                Text(
+                                  'Version $_appVersion',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Expanded(flex: 1, child: Container(),),
+                                FButton(
+                                  prefix: const Icon(Icons.info),
+                                  onPress: _aboutScreen,
+                                  child: const Text('About'),
+                                )
+                              ],
                             ),
                           ],
                         ),
